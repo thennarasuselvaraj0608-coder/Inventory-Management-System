@@ -1,0 +1,12 @@
+@Service
+public class StockAlertService {
+
+    public String checkStock(Product product) {
+
+        if(product.getQuantity() <= product.getMinStock()) {
+            return "LOW STOCK ALERT";
+        }
+
+        return "STOCK AVAILABLE";
+    }
+}
