@@ -1,0 +1,17 @@
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
+    @Autowired
+    ProductRepository repo;
+
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return repo.findAll();
+    }
+
+    @PostMapping
+    public Product saveProduct(@RequestBody Product product) {
+        return repo.save(product);
+    }
+}
