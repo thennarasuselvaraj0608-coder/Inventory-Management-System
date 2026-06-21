@@ -1,9 +1,0 @@
-Project Title : Inventory Management System
-
-Frontend      : HTML, CSS, JavaScript
-Backend       : Java Spring Boot 3
-Database      : MySQL 8
-Build Tool    : Maven
-Additional    : Barcode Scanner (ZXing)
-                Stock Alerts
-                REST API
