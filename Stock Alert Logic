@@ -1,7 +1,0 @@
-if(product.getQuantity()
-    <= product.getMinStock()) {
-
-    System.out.println(
-      "LOW STOCK ALERT : "
-      + product.getName());
-}
