@@ -1,0 +1,12 @@
+function deleteProduct(id) {
+
+    fetch("http://localhost:8080/products/" + id, {
+        method: "DELETE"
+    })
+
+    .then(() => {
+        alert("Product Deleted Successfully!");
+        loadProducts();
+    });
+
+}
