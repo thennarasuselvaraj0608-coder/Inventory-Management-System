@@ -1,0 +1,14 @@
+table.innerHTML += `
+<tr>
+    <td>${product.productName}</td>
+    <td>${product.barcode}</td>
+    <td>${product.quantity}</td>
+    <td>${product.price}</td>
+    <td>${alert}</td>
+    <td>
+        <button onclick="deleteProduct(${product.id})">
+            Delete
+        </button>
+    </td>
+</tr>
+`;
