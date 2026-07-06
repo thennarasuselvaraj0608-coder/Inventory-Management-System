@@ -1,0 +1,34 @@
++----------------+
+                    |    Supplier    |
+                    +----------------+
+                    | Supplier_ID(PK)|
+                    | Name           |
+                    | Phone          |
+                    | Address        |
+                    +-------+--------+
+                            |
+                            | Supplies
+                            |
+                            |
++----------------+    +------+-------+    +----------------+
+|    Category    |----|    Product   |----|    Inventory   |
++----------------+    +--------------+    +----------------+
+| Category_ID(PK)|    | Product_ID(PK)|   | Inventory_ID(PK)|
+| Category_Name  |    | Product_Name |   | Quantity       |
++----------------+    | Price        |   | Stock_Status   |
+                      | Category_ID(FK)|  | Product_ID(FK) |
+                      | Supplier_ID(FK)|  +----------------+
+                      +------+-------+
+                             |
+                             |
+                 +-----------+-----------+
+                 |                       |
+         +-------+--------+      +-------+--------+
+         | Purchase Order |      |      Sales     |
+         +----------------+      +----------------+
+         | Purchase_ID(PK)|      | Sale_ID(PK)    |
+         | Date           |      | Date           |
+         | Product_ID(FK) |      | Product_ID(FK) |
+         | Quantity       |      | Quantity       |
+         | Total_Amount   |      | Total_Amount   |
+         +----------------+      +----------------+
