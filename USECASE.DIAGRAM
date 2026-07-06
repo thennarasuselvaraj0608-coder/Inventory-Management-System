@@ -1,0 +1,33 @@
++--------------------------------------+
+                   |      Inventory Management System     |
+                   +--------------------------------------+
+
+          Admin
+            |
+            |-----------------------> Login
+            |-----------------------> Manage Users
+            |-----------------------> Manage Products
+            |-----------------------> Manage Categories
+            |-----------------------> Manage Suppliers
+            |-----------------------> View Inventory Reports
+            |-----------------------> Generate Sales Reports
+            |
+            |
+    Inventory Staff
+            |
+            |-----------------------> Login
+            |-----------------------> Add Products
+            |-----------------------> Update Products
+            |-----------------------> Manage Stock
+            |-----------------------> Record Purchases
+            |-----------------------> Record Sales
+            |-----------------------> View Stock Status
+            |
+            |
+         Customer
+            |
+            |-----------------------> Register/Login
+            |-----------------------> View Products
+            |-----------------------> Search Products
+            |-----------------------> Check Product Availability
+            |-----------------------> View Purchase History
