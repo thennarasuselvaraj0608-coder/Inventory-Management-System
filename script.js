@@ -236,6 +236,8 @@ document.getElementById('cancelBtn').addEventListener('click', closeModal);
 modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
 
 function openAddModal(){
+  deleteBackdrop.hidden = true;
+  pendingDeleteId = null;
   modalTitle.textContent = 'Add item';
   submitBtn.textContent = 'Add to shelf';
   itemForm.reset();
@@ -248,6 +250,8 @@ function openAddModal(){
 function openEditModal(id){
   const item = items.find(i => i.id === id);
   if (!item) return;
+  deleteBackdrop.hidden = true;
+  pendingDeleteId = null;
   modalTitle.textContent = 'Edit item';
   submitBtn.textContent = 'Save changes';
   fieldId.value = item.id;
@@ -311,6 +315,7 @@ itemForm.addEventListener('submit', (e) => {
 function openDeleteModal(id){
   const item = items.find(i => i.id === id);
   if (!item) return;
+  modalBackdrop.hidden = true;
   pendingDeleteId = id;
   deleteItemName.textContent = item.name;
   deleteBackdrop.hidden = false;
