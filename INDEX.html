@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockYard — Inventory Management</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="floor-tape" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">◧</span>
+      <div class="brand-text">
+        <h1>STOCKYARD</h1>
+        <p>Inventory Management System</p>
+      </div>
+    </div>
+    <button id="openAddBtn" class="btn btn-primary">
+      <span class="plus">＋</span> Add item
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="stat-row" aria-label="Inventory summary">
+    <div class="crate">
+      <span class="crate-label">01 · ON SHELF</span>
+      <span class="crate-value" id="statTotalItems">0</span>
+      <span class="crate-sub">distinct SKUs</span>
+    </div>
+    <div class="crate">
+      <span class="crate-label">02 · UNITS</span>
+      <span class="crate-value" id="statTotalUnits">0</span>
+      <span class="crate-sub">total units in stock</span>
+    </div>
+    <div class="crate">
+      <span class="crate-label">03 · VALUE</span>
+      <span class="crate-value" id="statTotalValue">₹0</span>
+      <span class="crate-sub">stock value at cost</span>
+    </div>
+    <div class="crate crate-alert">
+      <span class="crate-label">04 · REORDER</span>
+      <span class="crate-value" id="statLowStock">0</span>
+      <span class="crate-sub">items below threshold</span>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="Search by name or SKU…">
+    </div>
+    <select id="categoryFilter">
+      <option value="">All categories</option>
+    </select>
+    <select id="sortSelect">
+      <option value="name-asc">Name A–Z</option>
+      <option value="name-desc">Name Z–A</option>
+      <option value="qty-asc">Quantity: low to high</option>
+      <option value="qty-desc">Quantity: high to low</option>
+      <option value="value-desc">Value: high to low</option>
+    </select>
+    <div class="view-toggle" role="tablist" aria-label="View mode">
+      <button class="toggle-btn active" data-view="grid" id="gridViewBtn">Tags</button>
+      <button class="toggle-btn" data-view="table" id="tableViewBtn">Ledger</button>
+    </div>
+  </section>
+
+  <section id="emptyState" class="empty-state" hidden>
+    <p class="empty-title">THE SHELF IS BARE</p>
+    <p class="empty-sub">No items match this search. Try another term, or add new stock.</p>
+  </section>
+
+  <section id="gridView" class="tag-grid"></section>
+
+  <section id="tableView" class="ledger-wrap" hidden>
+    <table class="ledger">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Item</th>
+          <th>Category</th>
+          <th>Qty</th>
+          <th>Reorder at</th>
+          <th>Unit cost</th>
+          <th>Value</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="ledgerBody"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Data lives in this browser tab only — refreshing the page resets the demo stock.</p>
+</footer>
+
+<!-- Add / Edit modal -->
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add item</h2>
+      <button class="modal-close" id="closeModalBtn" aria-label="Close">✕</button>
+    </div>
+    <form id="itemForm" class="modal-body">
+      <input type="hidden" id="itemId">
+
+      <label class="field">
+        <span>Item name</span>
+        <input type="text" id="fieldName" required placeholder="e.g. Hex bolt M6x20">
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>SKU</span>
+          <input type="text" id="fieldSku" required placeholder="e.g. HW-0142">
+        </label>
+        <label class="field">
+          <span>Category</span>
+          <input type="text" id="fieldCategory" required placeholder="e.g. Hardware" list="categoryList">
+          <datalist id="categoryList"></datalist>
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Quantity on hand</span>
+          <input type="number" id="fieldQty" min="0" step="1" required placeholder="0">
+        </label>
+        <label class="field">
+          <span>Reorder threshold</span>
+          <input type="number" id="fieldReorder" min="0" step="1" required placeholder="0">
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Unit cost (₹)</span>
+        <input type="number" id="fieldCost" min="0" step="0.01" required placeholder="0.00">
+      </label>
+
+      <p class="form-error" id="formError" hidden></p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Add to shelf</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete confirm -->
+<div class="modal-backdrop" id="deleteBackdrop" hidden>
+  <div class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div class="modal-head">
+      <h2 id="deleteTitle">Remove item?</h2>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-text">This pulls <strong id="deleteItemName"></strong> off the shelf for good. This can't be undone.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Remove item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
