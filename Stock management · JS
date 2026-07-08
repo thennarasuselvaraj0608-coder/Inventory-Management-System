@@ -1,0 +1,56 @@
+// STOCK MANAGEMENT
+// Assumes getProducts() and saveProducts() already exist in your script.js
+// If not, add these two basic versions:
+
+const PRODUCT_KEY = "stockyard_products";
+
+function getProducts() {
+  return JSON.parse(localStorage.getItem(PRODUCT_KEY) || "[]");
+}
+function saveProducts(list) {
+  localStorage.setItem(PRODUCT_KEY, JSON.stringify(list));
+}
+
+// Increase or decrease stock for a given SKU
+function adjustStock(sku, delta, reason = "manual") {
+  const products = getProducts();
+  const p = products.find(p => p.sku === sku);
+  if (!p) return;
+  p.qty += delta;
+  if (p.qty < 0) p.qty = 0; // never go negative
+  saveProducts(products);
+  logMovement(sku, delta, reason);
+  checkLowStock(p);
+}
+
+function increaseStock(sku, amount, reason = "restock") {
+  adjustStock(sku, Math.abs(amount), reason);
+}
+
+function reduceStock(sku, amount, reason = "manual reduction") {
+  adjustStock(sku, -Math.abs(amount), reason);
+}
+
+// Movement log — powers your LEDGER tab
+const MOVEMENT_KEY = "stockyard_movements";
+
+function logMovement(sku, delta, reason) {
+  const log = JSON.parse(localStorage.getItem(MOVEMENT_KEY) || "[]");
+  log.push({ sku, delta, reason, date: new Date().toISOString() });
+  localStorage.setItem(MOVEMENT_KEY, JSON.stringify(log));
+}
+
+function movementHistory(sku) {
+  return JSON.parse(localStorage.getItem(MOVEMENT_KEY) || "[]").filter(m => m.sku === sku);
+}
+
+// Low stock alert (needs notifications.js loaded too)
+function checkLowStock(product) {
+  if (typeof pushNotification !== "function") return; // notifications.js not loaded
+  if (product.qty <= product.reorderAt) {
+    pushNotification(`Low stock: ${product.name} (${product.qty} left)`, "low-stock");
+  }
+  if (product.qty === 0) {
+    pushNotification(`Out of stock: ${product.name}`, "out-of-stock");
+  }
+}
