@@ -1,0 +1,30 @@
+// DASHBOARD
+// Requires: sales.js, purchases.js, reports.js loaded first
+
+function dashboardStats() {
+  const products = getProducts();
+  const totalSales = getSales().reduce((sum, s) => sum + s.total, 0);
+  const totalPurchases = getPurchases().reduce((sum, p) => sum + p.total, 0);
+  const lowStockItems = products.filter(p => p.qty <= p.reorderAt).length;
+  const { revenue } = profitLossReport("2000-01-01", new Date().toISOString());
+
+  return {
+    totalProducts: products.length,
+    totalSales,
+    totalPurchases,
+    lowStockItems,
+    revenue
+  };
+}
+
+// Example: render into your existing stat cards
+function renderDashboard() {
+  const stats = dashboardStats();
+  const el = id => document.getElementById(id);
+
+  if (el("statTotalProducts")) el("statTotalProducts").textContent = stats.totalProducts;
+  if (el("statTotalSales")) el("statTotalSales").textContent = "₹" + stats.totalSales.toFixed(2);
+  if (el("statTotalPurchases")) el("statTotalPurchases").textContent = "₹" + stats.totalPurchases.toFixed(2);
+  if (el("statLowStock")) el("statLowStock").textContent = stats.lowStockItems;
+  if (el("statRevenue")) el("statRevenue").textContent = "₹" + stats.revenue.toFixed(2);
+}
