@@ -44,4 +44,4 @@ function requireRole(role) {
   if (!u || u.role !== role) alert("Access denied: " + role + " only");
 }
 
-seedUsers();
+seedUsers(); 
