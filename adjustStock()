@@ -1,0 +1,9 @@
+function adjustStock(sku, delta, reason = "manual") {
+  const products = getProducts(); // your existing getter
+  const p = products.find(p => p.sku === sku);
+  if (!p) return;
+  p.qty += delta;
+  saveProducts(products);
+  logMovement(sku, delta, reason); // see Inventory Tracking below
+  checkLowStock(p);
+}
