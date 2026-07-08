@@ -1,0 +1,38 @@
+// BACKUP & RESTORE
+
+function backupData() {
+  const keys = [
+    "stockyard_products",
+    "stockyard_suppliers",
+    "stockyard_customers",
+    "stockyard_purchases",
+    "stockyard_sales",
+    "stockyard_movements",
+    "stockyard_notifications"
+  ];
+  const dump = {};
+  keys.forEach(k => (dump[k] = localStorage.getItem(k)));
+
+  const blob = new Blob([JSON.stringify(dump, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `stockyard-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+}
+
+function restoreData(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dump = JSON.parse(e.target.result);
+    Object.entries(dump).forEach(([k, v]) => {
+      if (v !== null) localStorage.setItem(k, v);
+    });
+    alert("Restore complete. Reloading...");
+    location.reload();
+  };
+  reader.readAsText(file);
+}
+
+// Example usage in HTML:
+// <button onclick="backupData()">Backup</button>
+// <input type="file" id="restoreFile" accept=".json" onchange="restoreData(this.files[0])" />
