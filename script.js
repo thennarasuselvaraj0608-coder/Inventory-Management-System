@@ -51,6 +51,21 @@ const toast = document.getElementById('toast');
 let currentView = 'grid';
 let pendingDeleteId = null;
 
+// ---------- modal show/hide helpers ----------
+// IMPORTANT: we set BOTH the `hidden` attribute AND inline display style.
+// This guarantees the modal is actually hidden/shown even if some CSS rule
+// elsewhere (e.g. .modal-backdrop { display: flex }) has higher specificity
+// than the browser's default `[hidden]{ display:none }` rule. That mismatch
+// was the root cause of two modals appearing on screen at the same time.
+function showModal(el){
+  el.hidden = false;
+  el.style.display = 'flex';
+}
+function hideModal(el){
+  el.hidden = true;
+  el.style.display = 'none';
+}
+
 // ---------- helpers ----------
 function formatMoney(n){
   return '₹' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
@@ -236,21 +251,21 @@ document.getElementById('cancelBtn').addEventListener('click', closeModal);
 modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
 
 function openAddModal(){
-  deleteBackdrop.hidden = true;
+  hideModal(deleteBackdrop);
   pendingDeleteId = null;
   modalTitle.textContent = 'Add item';
   submitBtn.textContent = 'Add to shelf';
   itemForm.reset();
   fieldId.value = '';
   formError.hidden = true;
-  modalBackdrop.hidden = false;
+  showModal(modalBackdrop);
   fieldName.focus();
 }
 
 function openEditModal(id){
   const item = items.find(i => i.id === id);
   if (!item) return;
-  deleteBackdrop.hidden = true;
+  hideModal(deleteBackdrop);
   pendingDeleteId = null;
   modalTitle.textContent = 'Edit item';
   submitBtn.textContent = 'Save changes';
@@ -262,12 +277,12 @@ function openEditModal(id){
   fieldReorder.value = item.reorder;
   fieldCost.value = item.cost;
   formError.hidden = true;
-  modalBackdrop.hidden = false;
+  showModal(modalBackdrop);
   fieldName.focus();
 }
 
 function closeModal(){
-  modalBackdrop.hidden = true;
+  hideModal(modalBackdrop);
 }
 
 itemForm.addEventListener('submit', (e) => {
@@ -315,23 +330,23 @@ itemForm.addEventListener('submit', (e) => {
 function openDeleteModal(id){
   const item = items.find(i => i.id === id);
   if (!item) return;
-  modalBackdrop.hidden = true;
+  hideModal(modalBackdrop);
   pendingDeleteId = id;
   deleteItemName.textContent = item.name;
-  deleteBackdrop.hidden = false;
+  showModal(deleteBackdrop);
 }
 document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
-  deleteBackdrop.hidden = true;
+  hideModal(deleteBackdrop);
   pendingDeleteId = null;
 });
 deleteBackdrop.addEventListener('click', (e) => {
-  if (e.target === deleteBackdrop){ deleteBackdrop.hidden = true; pendingDeleteId = null; }
+  if (e.target === deleteBackdrop){ hideModal(deleteBackdrop); pendingDeleteId = null; }
 });
 confirmDeleteBtn.addEventListener('click', () => {
   if (!pendingDeleteId) return;
   const item = items.find(i => i.id === pendingDeleteId);
   items = items.filter(i => i.id !== pendingDeleteId);
-  deleteBackdrop.hidden = true;
+  hideModal(deleteBackdrop);
   showToast(`Removed ${item ? item.name : 'item'}`);
   pendingDeleteId = null;
   render();
@@ -341,9 +356,14 @@ confirmDeleteBtn.addEventListener('click', () => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape'){
     if (!modalBackdrop.hidden) closeModal();
-    if (!deleteBackdrop.hidden){ deleteBackdrop.hidden = true; pendingDeleteId = null; }
+    if (!deleteBackdrop.hidden){ hideModal(deleteBackdrop); pendingDeleteId = null; }
   }
 });
 
 // ---------- init ----------
+// Ensure both modals start fully hidden (in case CSS specificity issue
+// left them visible on first paint before any JS interaction happens).
+hideModal(modalBackdrop);
+hideModal(deleteBackdrop);
+
 render();
