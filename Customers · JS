@@ -1,0 +1,39 @@
+// CUSTOMER MANAGEMENT
+const CUSTOMER_KEY = "stockyard_customers";
+
+function getCustomers() {
+  return JSON.parse(localStorage.getItem(CUSTOMER_KEY) || "[]");
+}
+
+function saveCustomers(list) {
+  localStorage.setItem(CUSTOMER_KEY, JSON.stringify(list));
+}
+
+function addCustomer({ name, phone, email }) {
+  const list = getCustomers();
+  list.push({
+    id: "CUS-" + Date.now(),
+    name,
+    phone,
+    email,
+    purchases: []
+  });
+  saveCustomers(list);
+}
+
+function editCustomer(id, updates) {
+  const list = getCustomers();
+  const c = list.find(c => c.id === id);
+  if (!c) return;
+  Object.assign(c, updates);
+  saveCustomers(list);
+}
+
+function deleteCustomer(id) {
+  saveCustomers(getCustomers().filter(c => c.id !== id));
+}
+
+function customerPurchaseHistory(id) {
+  const c = getCustomers().find(c => c.id === id);
+  return c ? c.purchases : [];
+}
