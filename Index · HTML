@@ -99,26 +99,6 @@
     </table>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- SUPPLIER MANAGEMENT — new section -->
-  <!-- ============================================================ -->
-  <section id="supplier-section" style="margin-top: 40px;">
-    <h2 style="color:#f5a623; letter-spacing:1px;">SUPPLIER MANAGEMENT</h2>
-
-    <div style="background:#1a1a1a; padding:20px; border-radius:8px; margin-bottom:20px;">
-      <h3 style="margin-top:0; color:#fff;">Add New Supplier</h3>
-      <form id="supplierForm" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <input id="supName" placeholder="Supplier Name" required style="padding:10px; border-radius:6px; border:1px solid #333; background:#111; color:#fff;">
-        <input id="supPhone" placeholder="Phone Number" required style="padding:10px; border-radius:6px; border:1px solid #333; background:#111; color:#fff;">
-        <input id="supEmail" type="email" placeholder="Email" style="padding:10px; border-radius:6px; border:1px solid #333; background:#111; color:#fff;">
-        <input id="supAddress" placeholder="Address" style="padding:10px; border-radius:6px; border:1px solid #333; background:#111; color:#fff;">
-        <button type="submit" style="grid-column: span 2; padding:12px; background:#f5a623; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">+ Add Supplier</button>
-      </form>
-    </div>
-
-    <div id="supplierList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px;"></div>
-  </section>
-
 </main>
 
 <footer class="site-footer">
@@ -196,74 +176,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ============================================================ -->
-<!-- Existing app script -->
-<!-- ============================================================ -->
 <script src="script.js"></script>
-
-<!-- ============================================================ -->
-<!-- New feature scripts — order matters, keep this sequence -->
-<!-- ============================================================ -->
-<script src="stock-management.js"></script>
-<script src="suppliers.js"></script>
-<script src="customers.js"></script>
-<script src="purchases.js"></script>
-<script src="sales.js"></script>
-<script src="reports.js"></script>
-<script src="backup.js"></script>
-<script src="dashboard.js"></script>
-<script src="auth.js"></script>
-
-<!-- ============================================================ -->
-<!-- Supplier UI wiring — must load AFTER suppliers.js above -->
-<!-- ============================================================ -->
-<script>
-  function renderSupplierList() {
-    const container = document.getElementById("supplierList");
-    const suppliers = getSuppliers();
-    container.innerHTML = "";
-
-    if (suppliers.length === 0) {
-      container.innerHTML = '<p style="color:#666;">No suppliers added yet.</p>';
-      return;
-    }
-
-    suppliers.forEach(function (s) {
-      const card = document.createElement("div");
-      card.style.cssText = "background:#1a1a1a; border-left:3px solid #f5a623; padding:16px; border-radius:8px; color:#fff;";
-      card.innerHTML =
-        '<div style="color:#f5a623; font-size:12px; letter-spacing:1px;">' + s.id + '</div>' +
-        '<div style="font-size:18px; font-weight:bold; margin:4px 0;">' + s.name + '</div>' +
-        '<div style="color:#999; font-size:13px;">Phone: ' + s.phone + '</div>' +
-        '<div style="color:#999; font-size:13px;">Email: ' + (s.email || "-") + '</div>' +
-        '<div style="color:#999; font-size:13px; margin-bottom:10px;">Address: ' + (s.address || "-") + '</div>' +
-        '<div style="color:#666; font-size:12px; margin-bottom:10px;">Orders placed: ' + s.history.length + '</div>' +
-        '<button onclick="removeSupplier(\'' + s.id + '\')" style="padding:8px 14px; background:#333; color:#fff; border:none; border-radius:6px; cursor:pointer;">Remove</button>';
-      container.appendChild(card);
-    });
-  }
-
-  function removeSupplier(id) {
-    if (confirm("Remove this supplier?")) {
-      deleteSupplier(id);
-      renderSupplierList();
-    }
-  }
-
-  document.getElementById("supplierForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    addSupplier({
-      name: document.getElementById("supName").value,
-      phone: document.getElementById("supPhone").value,
-      email: document.getElementById("supEmail").value,
-      address: document.getElementById("supAddress").value
-    });
-    e.target.reset();
-    renderSupplierList();
-  });
-
-  renderSupplierList();
-</script>
-
 </body>
 </html>
